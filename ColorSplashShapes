@@ -98,3 +98,54 @@ with mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5) a
             for num, hand in enumerate(results.multi_hand_landmarks):
                 mp_drawing.draw_landmarks(image, hand, mp_hands.HAND_CONNECTIONS,
                                           mp_drawing.DrawingSpec(color=(250, 44, 250), thickness=2, circle_radius=2))
+
+if num == 0:  # Left hand (square)
+                    for point in mp_hands.HandLandmark:
+                        normalized_landmark = hand.landmark[point]
+                        pixel_coordinates_landmark = mp_drawing._normalized_to_pixel_coordinates(
+                            normalized_landmark.x, normalized_landmark.y, imageWidth, imageHeight)
+                        point = str(point)
+
+                        if point == 'HandLandmark.INDEX_FINGER_TIP':
+                            try:
+                                draw_square(image, (pixel_coordinates_landmark[0] - 25, pixel_coordinates_landmark[1] - 25), 50, colors['square'])
+                                if x_enemy['square'] - 10 <= pixel_coordinates_landmark[0] <= x_enemy['square'] + 10:
+                                    print("Square found")
+                                    x_enemy['square'] = random.randint(50, 600)
+                                    y_enemy['square'] = random.randint(50, 400)
+                                    score += 1
+                            except:
+                                pass
+
+                elif num == 1:  # Right hand (circle)
+                    for point in mp_hands.HandLandmark:
+                        normalized_landmark = hand.landmark[point]
+                        pixel_coordinates_landmark = mp_drawing._normalized_to_pixel_coordinates(
+                            normalized_landmark.x, normalized_landmark.y, imageWidth, imageHeight)
+                        point = str(point)
+
+                        if point == 'HandLandmark.INDEX_FINGER_TIP':
+                            try:
+                                draw_circle(image, (pixel_coordinates_landmark[0], pixel_coordinates_landmark[1]), 25, colors['circle'])
+                                if x_enemy['circle'] - 10 <= pixel_coordinates_landmark[0] <= x_enemy['circle'] + 10:
+                                    print("Circle found")
+                                    x_enemy['circle'] = random.randint(50, 600)
+                                    y_enemy['circle'] = random.randint(50, 400)
+                                    score += 1
+                            except:
+                                pass
+
+        cv2.imshow('Hand Tracking', image)
+
+        if remaining_time == 0:
+            print("TIME'S UP!")
+            print("Final Score:", score)
+            cv2.waitKey(0)  # Wait until any key is pressed
+            break
+
+        if cv2.waitKey(10) & 0xFF == ord('q'):
+            print("Final Score:", score)
+            break
+
+video.release()
+cv2.destroyAllWindows()
